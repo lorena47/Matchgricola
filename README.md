@@ -14,7 +14,7 @@ Para resolver el problema, en la aplicación aparecerán solo personas disponibl
   -  garantiza una alta disponibilidad y seguridad gracias a la distribución de nodos en distintos puntos del mundo (redundancia).
   - posibilita la sincronización de datos en tiempo real, de modo que los usuarios pueden ver de inmediato cualquier cambio en ofertas o disponibilidades.
   - favorece el escalado automático del sistema según las necesidades y la demanda en distintas temporadas agrícolas.
-  - facilita una monitorización continua del servicio, asegurando su correcto funcionamiento y una rápida detección de incidencias.
+  - agiliza el desarrollo por los recursos disponibles y mejora el rendimiento por la optimización de los recursos de forma automática.
 
 ## Hitos
 
