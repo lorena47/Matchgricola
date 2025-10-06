@@ -2,7 +2,9 @@
 
 ## Creación del repositorio
 
-![Creación del repositorio](./imagenes/creacion-repo.png)
+<p align="center">
+  <img src="./imagenes/creacion-repo.png" alt="Creación del repositorio" width="600"/>
+</p>
 
 * **Problema a resolver:** incluido en el [`README.md`](../README.md).
 
@@ -15,24 +17,32 @@
 ## Configuración del entorno
 
 * **Claves:** he creado las claves y he añadido la pública a la cuenta de GitHub.
+<br><br>
 
-![Claves creadas](./imagenes/claves.png)
-![Clave pública en GitHub](./imagenes/clave-git.png)
+<p align="center">
+  <img src="./imagenes/claves.png" alt="Claves creadas" width="400"/>
+</p>
+<p align="center">
+  <img src="./imagenes/clave-git.png" alt="Clave pública en GitHub" width="600"/>
+</p>
+
+<br>
 
 * **Nombre y correo electrónico.**
 
 ```bash
-$ git config --global user.name "Lorena"
-$ git config --global user.email lorenacastellanofdez@gmail.com
+    $ git config --global user.name "Lorena"
+    $ git config --global user.email lorenacastellanofdez@gmail.com
 ```
 
 * **Perfil.**
 
-![Perfil](./imagenes/perfil.png)
+    <img src="./imagenes/perfil.png" alt="Perfil" width="200"/>
+
 
 * **Segundo factor de autenticación.**
 
-![2FA](./imagenes/2fa.png)
+    <img src="./imagenes/2fa.png" alt="2FA" width="600"/>
 
 
 
