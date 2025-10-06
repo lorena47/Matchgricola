@@ -8,6 +8,13 @@ Para resolver el problema, en la aplicación aparecerán solo personas disponibl
 
 ## Despliegue en la nube
 
+* El servidor, que es lo que se despliega en la nube, es el núcleo funcional del proyecto: conectar a múltiples usuarios y gestionar los emparejamientos entre estos (propietarios y jornaleros).
+
+* La aplicación se beneficia del despliegue en la nube, ya que:
+  -  garantiza una alta disponibilidad y seguridad gracias a la distribución de nodos en distintos puntos del mundo (redundancia).
+  - posibilita la sincronización de datos en tiempo real, de modo que los usuarios pueden ver de inmediato cualquier cambio en ofertas o disponibilidades.
+  - favorece el escalado automático del sistema según las necesidades y la demanda en distintas temporadas agrícolas.
+  - facilita una monitorización continua del servicio, asegurando su correcto funcionamiento y una rápida detección de incidencias.
 
 ## Hitos
 
