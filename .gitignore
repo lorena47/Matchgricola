@@ -416,3 +416,19 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Entorno virtual
+venv/
+.env/
+
+# Archivos de caché
+__pycache__/
+*.py[cod]
+*.log
+
+# Base de datos local
+db.sqlite3
+
+# Archivos de pruebas
+.coverage
+.pytest_cache/
