@@ -1,0 +1,1 @@
+MIN_EUROS_HORA = 9

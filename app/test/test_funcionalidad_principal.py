@@ -1,29 +1,30 @@
 import pytest
+from app import models
 
 @pytest.mark.django_db
 # Como propietario, debo poder hacer una propuesta de trabajo para un período determinado.
 def test_HU1():
-    oferta = Oferta.crear(titulo="Cortar espárragos", 
+    oferta = models.Oferta.crear(titulo="Cortar espárragos", 
         descripcion="Se requiere de un jornalero para abarcar tres alanzadas diarias", diaInicio=3, mesInicio=3, añoInicio=2026,
         diaFin=3, mesFin=6, añoFin=2026,
         plazas=1, eurosHora=8)
 
     assert oferta.id is not None
-    assert Oferta.objects.filter(id=oferta.id).exists()
+    assert models.Oferta.objects.filter(id=oferta.id).exists()
     
 
 @pytest.mark.django_db
 # Como jornalero, debo poder tener un calendario de disponibilidad.
 def test_HU2():
-    calendario = Calendario.crear()
+    calendario = models.Calendario.crear()
     
     assert calendario.id is not None
-    assert Calendario.objects.filter(id=calendario.id).exists()
+    assert models.Calendario.objects.filter(id=calendario.id).exists()
 
 @pytest.mark.django_db
 # Como jornalero, debo poder editar mi calendario de disponibilidad.
 def test_HU3():
-    calendario = Calendario.crear()
+    calendario = models.Calendario.crear()
     calendario.incluirPeriodo(diaInicio=3, mesInicio=3, añoInicio=2026,
         diaFin=3, mesFin=6, añoFin=2026)
     
