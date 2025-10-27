@@ -95,6 +95,27 @@ He utilizado la plantilla proporcionada por GitHub Actions de Django, añadiendo
 ## Metodología de desarrollo
 Se utiliza TDD (Test-Driven Development) como metodología de desarrollo debido al enfoque que tiene en la calidad y la verificación continua del código. Dado que se usa Integración Continua, el hecho de que los tests se escriban antes de implementar la funcionalidad asegura que cada función cumpla con los requisitos desde el inicio. Complementado con GitHub Actions, cada commit o pull request ejecutará automáticamente los tests, de forma que si cualquier cambio estropea algún funcionamiento se detecta rápidamente.
 
+Para poner a prueba esta estrategia, en primer lugar se han planteado tests relativos a las HU 1 a 3:
+* **HU1.** Como propietario, debo poder hacer una propuesta de trabajo para un período determinado.
+  - test_crear_oferta
+* **HU2.** Como jornalero, debo poder tener un calendario de disponibilidad.
+  - test_crear_calendario
+* **HU3.** Como jornalero, debo poder editar mi calendario de disponibilidad.
+  - test_incluir_periodo
+  - test_quitar_periodo
+
+Posteriormente, se ha pensado la estructura que seguirán los datos mediante un diagrama, para implementar los modelos usándolo de base:
+ <p align="center">
+  <img src="./imagenes/umlHU1aHU3it1.png" alt="Diagrama" width="400"/>
+</p>
+
+
+Finalmente, al probar los test y detectar los fallos, pueden surgir nuevas funciones necesarias y a probar para completar la validación. En mi caso, se ha visto que uno de los test fallaba (quitar_periodo). Para localizar el fallo, se ha planteado un nuevo test para probar la disponibilidad. Este último test también ha fallado, siendo el error que si la disponibilidad está segmentada en dos periodos contiguos o solapados no se detecta. Se ha diseñado otra función de fusión para que dichos periodos se unan, creándole inicialmente su propio test para validarla tras implementarla.
+
+Una vez corregidos los errores, se ha vuelto a iterar sobre el proceso añadiendo tests para incluir a los propietarios y jornaleros y combinarlos con la iteración anterior.
+* Diagrama resultado al final del hito:
+* Tests al final del hito:
+
 
 
 

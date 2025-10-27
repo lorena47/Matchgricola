@@ -1,4 +1,5 @@
 from invoke import task
+import os
 
 @task
 def configurar(c):
@@ -15,5 +16,10 @@ def migrar(c):
 
 @task
 def resetear(c):
-  c.run("rm db.sqlite3")
-  c.run("rm app/migrations/*_initial.py")
+  if os.path.exists("db.sqlite3"):
+    os.remove("db.sqlite3")
+
+  migrations_path = os.path.join("app", "migrations")
+  for archivo in os.listdir(migrations_path):
+    if archivo.endswith("_initial.py"):
+      os.remove(os.path.join(migrations_path, archivo))
