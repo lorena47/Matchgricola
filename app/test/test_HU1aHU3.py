@@ -2,15 +2,117 @@ import pytest
 from app import models
 
 ##################################################################################################
+# SEGUNDA ITERACIÓN
+##################################################################################################
+
+##################################################################################################
+# HU1. Como propietario, debo poder hacer una propuesta de trabajo para un período determinado.
+##################################################################################################
+
+@pytest.fixture
+def propietario():
+    propietario = models.Propietario.crear(
+        nombre="Lorena",
+        correo="lorenaPRO@gmail.com"
+    )
+    return propietario
+
+@pytest.mark.django_db
+def test_crear_propietario(propietario):
+    assert propietario.id is not None
+    assert models.Propietario.objects.filter(id=propietario.id).exists()
+
+@pytest.fixture
+def ofertas(propietario):
+    oferta1 = models.Oferta.crear(
+        titulo="Cortar espárragos", 
+        descripcion="Se requiere de un jornalero para abarcar tres alanzadas diarias",
+        diaInicio=3, mesInicio=3, anoInicio=2026,
+        diaFin=3, mesFin=6, anoFin=2026,
+        plazas=1, eurosHora=8,
+        propietario=propietario
+    )
+    
+    oferta2 = models.Oferta.crear(
+        titulo="Coger aceitunas", 
+        descripcion="Se requiere de un jornalero para 6h diarias",
+        diaInicio=15, mesInicio=10, anoInicio=2026,
+        diaFin=15, mesFin=11, anoFin=2026,
+        plazas=1, eurosHora=10,
+        propietario=propietario
+    )
+    
+    return oferta1, oferta2
+
+@pytest.mark.django_db
+def test_propietario_propone_ofertas(propietario, ofertas):    
+    oferta1, oferta2 = ofertas
+    propietario_ofertas = list(propietario.ofertas.all())
+    assert len(propietario_ofertas) == 2
+    assert oferta1 in propietario_ofertas
+    assert oferta2 in propietario_ofertas
+
+@pytest.mark.django_db
+def test_eliminar_propietario(propietario, ofertas):
+    oferta1, oferta2 = ofertas
+    assert models.Oferta.objects.filter(id=oferta1.id).exists()
+    assert models.Oferta.objects.filter(id=oferta2.id).exists()
+    propietario.delete()
+    assert not models.Oferta.objects.filter(id=oferta1.id).exists()
+    assert not models.Oferta.objects.filter(id=oferta2.id).exists()
+
+##################################################################################################
+# HU2. Como jornalero, debo poder tener un calendario de disponibilidad.
+##################################################################################################
+
+@pytest.fixture
+def jornalero():
+    jornalero = models.Jornalero.crear(
+        nombre="Lorena",
+        correo="lorenaJOR@gmail.com"
+    )
+    return jornalero
+
+@pytest.mark.django_db
+def test_crear_jornalero(jornalero):
+    assert jornalero.id is not None
+    assert models.Jornalero.objects.filter(id=jornalero.id).exists()
+
+@pytest.mark.django_db
+def test_jornalero_tiene_calendario(jornalero):
+    assert jornalero.calendario is not None
+    assert models.Calendario.objects.filter(id=jornalero.calendario.id).exists()
+
+#@pytest.mark.django_db
+#def test_eliminar_jornalero(jornalero):
+#    calendario_id = jornalero.calendario.id
+#    assert models.Calendario.objects.filter(id=calendario_id).exists()
+#    jornalero.delete()
+#    assert not models.Calendario.objects.filter(id=calendario_id).exists()
+
+##################################################################################################
+# PRIMERA ITERACIÓN
+##################################################################################################
+
+##################################################################################################
 # HU1. Como propietario, debo poder hacer una propuesta de trabajo para un período determinado.
 ##################################################################################################
 
 @pytest.mark.django_db
 def test_crear_oferta():
-    oferta = models.Oferta.crear(titulo="Cortar espárragos", 
+    #Segunda iteración
+    propietario = models.Propietario.crear(
+        nombre="Lorena",
+        correo="lorenaPRO@gmail.com"
+    )
+
+    oferta = models.Oferta.crear(
+        titulo="Cortar espárragos", 
         descripcion="Se requiere de un jornalero para abarcar tres alanzadas diarias", diaInicio=3, mesInicio=3, anoInicio=2026,
         diaFin=3, mesFin=6, anoFin=2026,
-        plazas=1, eurosHora=8)
+        plazas=1, eurosHora=8,
+        propietario=propietario # Segunda iteración
+    )
 
     assert oferta.id is not None
     assert models.Oferta.objects.filter(id=oferta.id).exists()

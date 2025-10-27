@@ -105,16 +105,19 @@ Para poner a prueba esta estrategia, en primer lugar se han planteado tests rela
   - test_quitar_periodo
 
 Posteriormente, se ha pensado la estructura que seguirán los datos mediante un diagrama, para implementar los modelos usándolo de base:
- <p align="center">
+<p align="center">
   <img src="./imagenes/umlHU1aHU3it1.png" alt="Diagrama" width="400"/>
 </p>
-
+<br>
 
 Finalmente, al probar los test y detectar los fallos, pueden surgir nuevas funciones necesarias y a probar para completar la validación. En mi caso, se ha visto que uno de los test fallaba (quitar_periodo). Para localizar el fallo, se ha planteado un nuevo test para probar la disponibilidad. Este último test también ha fallado, siendo el error que si la disponibilidad está segmentada en dos periodos contiguos o solapados no se detecta. Se ha diseñado otra función de fusión para que dichos periodos se unan, creándole inicialmente su propio test para validarla tras implementarla.
 
-Una vez corregidos los errores, se ha vuelto a iterar sobre el proceso añadiendo tests para incluir a los propietarios y jornaleros y combinarlos con la iteración anterior.
-* Diagrama resultado al final del hito:
-* Tests al final del hito:
+Una vez corregidos los errores, se ha vuelto a iterar sobre el proceso añadiendo y modificando tests y modelos para incluir a los propietarios y jornaleros y combinarlos con la iteración anterior.
+* Diagrama resultado al final del hito:<br><br>
+  <p align="center">
+    <img src="./imagenes/umlHU1aHU3it2.png" alt="Diagrama" width="400"/>
+  </p>
+* Tests al final del hito: [`test_HU1aHU3.py`](../app/test/test_HU1aHU3.py)
 
 
 

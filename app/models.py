@@ -4,6 +4,7 @@ from django.forms import ValidationError
 from . import constants
 from datetime import date, timedelta
 
+
 class PeriodoDisponibilidad(models.Model):
     fecha_inicio = models.DateField()
     fecha_fin = models.DateField()
@@ -31,27 +32,6 @@ class PeriodoDisponibilidad(models.Model):
     def disponible(self, fechaInicio, fechaFin):
         return self.fecha_inicio <= fechaInicio and fechaFin <= self.fecha_fin
     
-class Oferta(models.Model):
-    titulo = models.CharField(max_length=100)
-    descripcion = models.TextField()
-    plazas = models.IntegerField(validators=[MinValueValidator(0)])
-    euros_hora = models.DecimalField(max_digits=4, decimal_places=2, validators=[MinValueValidator(constants.MIN_EUROS_HORA)])
-    periodo = models.ForeignKey(PeriodoDisponibilidad, on_delete=models.PROTECT, related_name='ofertas')
-
-    @classmethod
-    def crear(cls, titulo, descripcion, 
-              diaInicio, mesInicio, anoInicio,
-              diaFin, mesFin, anoFin, 
-              plazas, eurosHora):
-        fechas = PeriodoDisponibilidad.crear(diaInicio, mesInicio, anoInicio, diaFin, mesFin, anoFin)
-        oferta = cls.objects.create(
-            titulo=titulo,
-            descripcion=descripcion,
-            plazas=plazas,
-            euros_hora=eurosHora,
-            periodo=fechas
-        )
-        return oferta
 
 class Calendario(models.Model):
     periodos = models.ManyToManyField(PeriodoDisponibilidad, related_name='calendarios', blank=True)
@@ -131,5 +111,60 @@ class Calendario(models.Model):
         self.save()
 
 
+class Propietario(models.Model):
+    nombre = models.CharField(max_length=100)
+    telefono = models.CharField(max_length=15, blank=True, null=True)
+    correo = models.EmailField(unique=True)
+
+    @classmethod
+    def crear(cls, nombre, correo, telefono=None):
+        propietario = cls.objects.create(
+            nombre=nombre,
+            correo=correo,
+            telefono=telefono
+        )
+        return propietario
+    
+
+class Jornalero(models.Model):
+    nombre = models.CharField(max_length=100)
+    telefono = models.CharField(max_length=16, blank=True, null=True, validators=[constants.phoneNumberRegex])
+    correo = models.EmailField(unique=True)
+    calendario = models.OneToOneField(Calendario, on_delete=models.CASCADE, related_name='jornalero')
+
+    @classmethod
+    def crear(cls, nombre, correo, telefono=None):
+        calendario = Calendario.crear()
+        jornalero = cls.objects.create(
+            nombre=nombre,
+            correo=correo,
+            telefono=telefono,
+            calendario=calendario
+        )
+        return jornalero
+         
         
-        
+class Oferta(models.Model):
+    titulo = models.CharField(max_length=100)
+    descripcion = models.TextField()
+    plazas = models.IntegerField(validators=[MinValueValidator(0)])
+    euros_hora = models.DecimalField(max_digits=4, decimal_places=2, validators=[MinValueValidator(constants.MIN_EUROS_HORA)])
+    periodo = models.ForeignKey(PeriodoDisponibilidad, on_delete=models.PROTECT, related_name='ofertas')
+    propietario = models.ForeignKey(Propietario, on_delete=models.CASCADE, related_name='ofertas')
+
+    @classmethod
+    def crear(cls, titulo, descripcion, 
+              diaInicio, mesInicio, anoInicio,
+              diaFin, mesFin, anoFin, 
+              eurosHora, propietario, plazas=1):
+        fechas = PeriodoDisponibilidad.crear(diaInicio, mesInicio, anoInicio, diaFin, mesFin, anoFin)
+        oferta = cls.objects.create(
+            titulo=titulo,
+            descripcion=descripcion,
+            plazas=plazas,
+            euros_hora=eurosHora,
+            periodo=fechas,
+            propietario=propietario
+        )
+        return oferta
+    
