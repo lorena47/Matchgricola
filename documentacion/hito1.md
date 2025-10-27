@@ -6,7 +6,7 @@
   <img src="./imagenes/creacion-repo.png" alt="Creación del repositorio" width="600"/>
 </p>
 
-* **Problema a resolver:** descripción en [`descripcionSW.md`](../descripcionSW.md), donde también se encuentra la justificación del despliegue en la nube.
+* **Problema a resolver:** descripción en [`descripcionSW.md`](../documentacion/descripcionSW.md), donde también se encuentra la justificación del despliegue en la nube.
 
 * **Licencia:** siguiendo el enlace integrado en la parte de [licencia](https://choosealicense.com/) se opta por la [`GNU GPLv3`](../LICENSE), porque permite al resto de personas utilizar y modificar el proyecto, pero prohíbe distribuir versiones de código cerrado, promoviendo así el compartir mejoras.
 
