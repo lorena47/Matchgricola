@@ -34,7 +34,7 @@ Como sistema de integración continua (CI), he decidido utilizar **GitHub Action
 
 ## Creación inicial del entorno
 
-Configuración partiendo del repositorio en [`README.md`](../README.md)
+Aquí se detalla construcción del esqueleto/estructura del proyecto desde la nada. Para realizar la configuración partiendo del repositorio se detalla en [`README.md`](../README.md)
 
 ### Inicializar proyecto Django
 ```bash
