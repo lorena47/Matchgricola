@@ -1,4 +1,4 @@
-# Hito 1: Repositorio de prácticas y definición del proyecto
+# Hito 1: Repositorio de prácticas y definición del proyecto.
 
 ## Creación del repositorio
 
@@ -6,15 +6,15 @@
   <img src="./imagenes/creacion-repo.png" alt="Creación del repositorio" width="600"/>
 </p>
 
-* **Problema a resolver:** incluido en el [`README.md`](../README.md).
+* **Problema a resolver:** descripción en [`descripcionSW.md`](../descripcionSW.md), donde también se encuentra la justificación del despliegue en la nube.
 
-* **Licencia:** siguiendo el enlace integrado en la parte de [licencia](https://choosealicense.com/) he optado por la [`GNU GPLv3`](../LICENSE), porque permite al resto de personas utilizar y modificar el proyecto, pero prohíbe distribuir versiones de código cerrado, promoviendo así el compartir mejoras.
+* **Licencia:** siguiendo el enlace integrado en la parte de [licencia](https://choosealicense.com/) se opta por la [`GNU GPLv3`](../LICENSE), porque permite al resto de personas utilizar y modificar el proyecto, pero prohíbe distribuir versiones de código cerrado, promoviendo así el compartir mejoras.
 
 * **Ignorar ficheros:** se usa la plantilla de VisualStudio porque es el IDE que se va a usar en el desarrollo de la aplicación y, en caso de que se generen otros ficheros a ignorar no incluidos, simplemente se añadirán.
 
 * **Documentación:** para la documentación se ha creado una carpeta donde se subirán los *markdown* de cada hito y se enlazarán en el [`README.md`](../README.md).
 
-## Configuración del entorno
+## Configuración del entorno GitHub
 
 * **Claves:** he creado las claves y he añadido la pública a la cuenta de GitHub.
 <br><br>
@@ -31,8 +31,8 @@
 * **Nombre y correo electrónico.**
 
 ```bash
-    $ git config --global user.name "Lorena"
-    $ git config --global user.email lorenacastellanofdez@gmail.com
+    git config --global user.name "Lorena"
+    git config --global user.email lorenacastellanofdez@gmail.com
 ```
 
 * **Perfil.**
