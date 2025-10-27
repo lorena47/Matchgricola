@@ -87,7 +87,7 @@ En `.gitignore` añadir <br>
 > .pytest_cache/<br>
 
 ### Configurar GitHub Actions
-He utilizado la plantilla proporcionada por GitHub Actions de Django, tan solo configurando el Run Test para poner el uso de `pytest`.
+He utilizado la plantilla proporcionada por GitHub Actions de Django, añadiendo Build DB para que se migre la base de datos, modificando Run Test para que utilice pytest y cambiando las versiones de python por la 3.10 que es la mínima requerida.
 <p align="center">
   <img src="./imagenes/github-actions.png" alt="Plantillas GitHub Actions" width="600"/>
 </p>
