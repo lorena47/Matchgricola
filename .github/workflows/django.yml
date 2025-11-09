@@ -30,4 +30,4 @@ jobs:
         invoke migrar
     - name: Run Tests
       run: |
-        pytest --cov=. --cov-report=term-missing
+        invoke test

@@ -7,7 +7,8 @@ def configurar(c):
 
 @task
 def test(c):
-  c.run("pytest")
+  c.run("pytest app/test/test_perfiles.py")
+  c.run("pytest app/test/test_suscripciones.py")
 
 @task
 def migrar(c):

@@ -1,8 +1,10 @@
 from django.db import models
 from django.core.validators import MinValueValidator
 from django.forms import ValidationError
+from django.contrib.auth.hashers import make_password, check_password
 from . import constants
 from datetime import date, timedelta
+from .models import *
 
 
 class PeriodoDisponibilidad(models.Model):
@@ -34,11 +36,14 @@ class PeriodoDisponibilidad(models.Model):
     
 
 class Calendario(models.Model):
+    jornalero = models.OneToOneField('Jornalero', on_delete=models.CASCADE, related_name='calendario')
     periodos = models.ManyToManyField(PeriodoDisponibilidad, related_name='calendarios', blank=True)
 
     @classmethod
-    def crear(cls):
-        return cls.objects.create()
+    def crear(cls, jornalero):
+        if hasattr(jornalero, 'calendario'):
+            jornalero.calendario.delete()
+        return cls.objects.create(jornalero=jornalero)
 
     def incluirPeriodo(self, diaInicio, mesInicio, anoInicio, diaFin, mesFin, anoFin):
         periodo = PeriodoDisponibilidad.crear(diaInicio, mesInicio, anoInicio, diaFin, mesFin, anoFin)
@@ -81,10 +86,22 @@ class Calendario(models.Model):
                         )
                     )
 
-        self.periodos.clear()
-        for p in actualizados:
-            self.periodos.add(p)
+        self.periodos.set(actualizados)
         self.save()
+
+        for suscripcion in self.jornalero.suscripciones.filter(activa=True).select_related('oferta__periodo'):
+            oferta = suscripcion.oferta
+            periodo_oferta = oferta.periodo
+            if not self.disponible(
+                periodo_oferta.fecha_inicio.day,
+                periodo_oferta.fecha_inicio.month,
+                periodo_oferta.fecha_inicio.year,
+                periodo_oferta.fecha_fin.day,
+                periodo_oferta.fecha_fin.month,
+                periodo_oferta.fecha_fin.year
+            ):
+                suscripcion.activa = False
+                suscripcion.save()
 
     def fusion(self):
         periodos = list(self.periodos.all().order_by('fecha_inicio'))
@@ -104,46 +121,83 @@ class Calendario(models.Model):
                 actual = siguiente
         fusionados.append(actual)
 
-        self.periodos.clear()
-        for p in fusionados:
-            periodo = PeriodoDisponibilidad.crear(p.fecha_inicio, p.fecha_fin)
-            self.periodos.add(periodo)
+        nuevos_periodos = [PeriodoDisponibilidad.crear(p.fecha_inicio, p.fecha_fin) for p in fusionados]
+        self.periodos.set(nuevos_periodos)
         self.save()
 
-
-class Propietario(models.Model):
-    nombre = models.CharField(max_length=100)
-    telefono = models.CharField(max_length=15, blank=True, null=True)
-    correo = models.EmailField(unique=True)
-
     @classmethod
-    def crear(cls, nombre, correo, telefono=None):
-        propietario = cls.objects.create(
-            nombre=nombre,
-            correo=correo,
-            telefono=telefono
-        )
-        return propietario
+    def existe(cls, id):
+        return cls.objects.filter(id=id).exists()
+    
+    def numeroPeriodos(self):
+        return self.periodos.count()
+    
+    def getPeriodo(self, indice):
+        periodos = list(self.periodos.all())
+        if indice < 0 or indice >= len(periodos):
+            raise IndexError(f"Índice {indice} fuera de rango. Hay {len(periodos)} periodos disponibles.")
+        return periodos[indice]
     
 
-class Jornalero(models.Model):
-    nombre = models.CharField(max_length=100)
-    telefono = models.CharField(max_length=16, blank=True, null=True, validators=[constants.phoneNumberRegex])
+class Usuario(models.Model):
     correo = models.EmailField(unique=True)
-    calendario = models.OneToOneField(Calendario, on_delete=models.CASCADE, related_name='jornalero')
+    usuario = models.CharField(max_length=50, unique=True)
+    nombre = models.CharField(max_length=100)
+    telefono = models.CharField(max_length=16, blank=True, null=True, validators=[constants.phoneNumberRegex], unique=True)
+    contrasena = models.CharField(max_length=128)
 
+    class Meta:
+        abstract = True
+    
     @classmethod
-    def crear(cls, nombre, correo, telefono=None):
-        calendario = Calendario.crear()
-        jornalero = cls.objects.create(
+    def crear(cls, nombre, correo, usuario, contrasena, telefono=None):
+        cifrar = make_password(contrasena)
+        cuenta = cls.objects.create(
             nombre=nombre,
             correo=correo,
+            usuario=usuario,
             telefono=telefono,
-            calendario=calendario
+            contrasena=cifrar
         )
-        return jornalero
-         
-        
+        return cuenta
+
+    def identificar(self, contrasena):
+        return check_password(contrasena, self.contrasena)
+    
+    def eliminar(self):
+        self.delete()
+
+    @classmethod
+    def existe(cls, id):
+        return cls.objects.filter(id=id).exists()
+    
+    
+class Propietario(Usuario):
+    def getOfertas(self):
+        return list(self.ofertas.all())
+    
+    def getOferta(self, indice):
+        ofertas = list(self.ofertas.all())
+        if indice < 0 or indice >= len(ofertas):
+            raise IndexError(f"Índice {indice} fuera de rango. Hay {len(ofertas)} ofertas disponibles.")
+        return ofertas[indice]
+    
+    def aceptarSuscripcion(self, suscripcion):
+        if suscripcion.oferta.propietario != self:
+            raise ValidationError("La oferta no pertenece al propietario.")
+        trabajo = Trabajar.crear(suscripcion.jornalero, suscripcion.oferta)
+        return trabajo        
+    
+
+class Jornalero(Usuario):
+    def suscribir(self, oferta):
+        suscripcion = Suscribir.crear(self, oferta)
+        return suscripcion
+    
+    def getTrabajos(self):
+        return list(self.trabajos.all())
+
+
 class Oferta(models.Model):
     titulo = models.CharField(max_length=100)
     descripcion = models.TextField()
@@ -168,3 +222,124 @@ class Oferta(models.Model):
         )
         return oferta
     
+    def eliminar(self):
+        self.delete()
+
+    @classmethod
+    def existe(cls, id):
+        return cls.objects.filter(id=id).exists()
+    
+    def getSuscripciones(self):
+        return list(self.suscripciones.all())
+    
+    def getTrabajadores(self):
+        return list(self.trabajadores.all())
+
+    
+##################################################################################################
+# MODELOS DE RELACIONES
+##################################################################################################
+
+class Suscribir(models.Model):
+    jornalero = models.ForeignKey(Jornalero, on_delete=models.CASCADE, related_name='suscripciones')
+    oferta = models.ForeignKey(Oferta, on_delete=models.CASCADE, related_name='suscripciones')
+    activa = models.BooleanField(default=True)
+
+    class Meta:
+        unique_together = ('jornalero', 'oferta')
+
+    @classmethod
+    def crear(cls, jornalero, oferta):
+        if not hasattr(jornalero, 'calendario'):
+            raise ValidationError("El jornalero no tiene calendario de disponibilidad.")
+
+        calendario = jornalero.calendario
+        periodo = oferta.periodo
+
+        disponible = calendario.disponible(
+            periodo.fecha_inicio.day,
+            periodo.fecha_inicio.month,
+            periodo.fecha_inicio.year,
+            periodo.fecha_fin.day,
+            periodo.fecha_fin.month,
+            periodo.fecha_fin.year
+        )
+
+        if not disponible:
+            raise ValidationError("El jornalero no está disponible para esta oferta.")
+        
+        suscripcion, existe = cls.objects.get_or_create(
+            jornalero=jornalero,
+            oferta=oferta,
+            defaults={'activa': True}
+        )
+
+        if not existe and not suscripcion.activa:
+            suscripcion.activa = True
+            suscripcion.save()
+
+        return suscripcion
+    
+    @classmethod
+    def existe(cls, id):
+        return cls.objects.filter(id=id).exists()
+    
+    def cancelar(self):
+        self.activa = False
+        self.save()
+
+    def actualizar(self):
+        self.refresh_from_db()
+    
+class Trabajar(models.Model):
+    jornalero = models.ForeignKey(Jornalero, on_delete=models.CASCADE, related_name='trabajos')
+    oferta = models.ForeignKey(Oferta, on_delete=models.CASCADE, related_name='trabajadores')
+
+    class Meta:
+        unique_together = ('jornalero', 'oferta')
+
+    @classmethod
+    def crear(cls, jornalero, oferta):
+        if oferta.plazas == 0:
+            raise ValidationError("No hay plazas disponibles para esta oferta.")
+
+        trabajo = cls.objects.create(
+            jornalero=jornalero,
+            oferta=oferta
+        )
+
+        oferta.plazas -= 1
+        oferta.save()
+        Suscribir.objects.filter(jornalero=jornalero, oferta=oferta).update(activa=False)
+
+        return trabajo
+    
+    @classmethod
+    def existe(cls, id):
+        return cls.objects.filter(id=id).exists()
+
+
+##################################################################################################
+## FUNCIONES FLUJO
+##################################################################################################
+
+def obtenerOfertasDisponibles(jornalero):
+    if not hasattr(jornalero, 'calendario'):
+        return []
+
+    calendario = jornalero.calendario
+    ofertas = []
+
+    for oferta in Oferta.objects.filter(plazas__gt=0):
+        periodo_oferta = oferta.periodo
+        if calendario.disponible(
+            periodo_oferta.fecha_inicio.day,
+            periodo_oferta.fecha_inicio.month,
+            periodo_oferta.fecha_inicio.year,
+            periodo_oferta.fecha_fin.day,
+            periodo_oferta.fecha_fin.month,
+            periodo_oferta.fecha_fin.year
+        ):
+            ofertas.append(oferta)
+
+    return ofertas
