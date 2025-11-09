@@ -1,5 +1,5 @@
 import pytest
-from app import models
+from app.base.models import models
 
 ##################################################################################################
 # SEGUNDA ITERACIÓN

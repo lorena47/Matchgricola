@@ -1,16 +1,16 @@
 import pytest
-from app import models
+from app.base.models import usuarios, ofertas, calendarios, relaciones
 
 @pytest.fixture
 def propietario():
-    propietario = models.Propietario.crear(
+    propietario = usuarios.Propietario.crear(
         nombre="Lorena",
         correo="lorenaPRO@gmail.com",
         usuario="lorenaPRO",
         contrasena="pro"
     )
 
-    models.Oferta.crear(
+    ofertas.Oferta.crear(
         titulo="Cortar espárragos", 
         descripcion="Se requiere de un jornalero para abarcar tres alanzadas diarias",
         diaInicio=3, mesInicio=3, anoInicio=2026,
@@ -19,7 +19,7 @@ def propietario():
         propietario=propietario
     )
     
-    models.Oferta.crear(
+    ofertas.Oferta.crear(
         titulo="Coger aceitunas", 
         descripcion="Se requiere de un jornalero para 6h diarias",
         diaInicio=15, mesInicio=10, anoInicio=2026,
@@ -32,13 +32,13 @@ def propietario():
 
 @pytest.fixture
 def jornalero():
-    jornalero = models.Jornalero.crear(
+    jornalero = usuarios.Jornalero.crear(
         nombre="Lorena",
         correo="lorenaJOR@gmail.com",
         usuario="lorenaJOR",
         contrasena="jor"
     )
-    models.Calendario.crear(jornalero)
+    calendarios.Calendario.crear(jornalero)
     jornalero.calendario.incluirPeriodo(3, 3, 2026, 3, 6, 2026)
     return jornalero
 
@@ -55,9 +55,9 @@ def suscripcion(jornalero, propietario):
 
 @pytest.mark.django_db
 def test_ver_ofertas(jornalero, propietario):
-    ofertas = propietario.getOfertas()
-    oferta1, oferta2 = ofertas
-    disponibles = models.obtenerOfertasDisponibles(jornalero)
+    propuestas = propietario.getOfertas()
+    oferta1, oferta2 = propuestas
+    disponibles = ofertas.Oferta.obtenerOfertasDisponibles(jornalero)
     assert len(disponibles) == 1
     assert oferta1 in disponibles
     assert not oferta2 in disponibles
@@ -70,7 +70,7 @@ def test_ver_ofertas(jornalero, propietario):
 @pytest.mark.django_db
 def test_suscribir_ofertas(suscripcion):
     assert suscripcion.id is not None
-    assert models.Suscribir.existe(suscripcion.id)
+    assert relaciones.Suscribir.existe(suscripcion.id)
     suscripcion.jornalero.calendario.quitarPeriodo(3, 4, 2026, 3, 5, 2026)
     suscripcion.actualizar()
     assert suscripcion.activa == False
@@ -98,7 +98,7 @@ def test_aceptar_suscripcion(propietario, suscripcion, jornalero):
     trabajo = propietario.aceptarSuscripcion(suscripcion)
     suscripcion.actualizar()
     assert trabajo.id is not None
-    assert models.Trabajar.existe(trabajo.id)
+    assert relaciones.Trabajar.existe(trabajo.id)
     assert suscripcion.oferta.plazas == 0
     trabajadores = suscripcion.oferta.getTrabajadores()
     assert len(trabajadores) == 1

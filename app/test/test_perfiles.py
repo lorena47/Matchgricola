@@ -1,9 +1,9 @@
 import pytest
-from app import models
+from app.base.models import usuarios, ofertas, calendarios
 
 @pytest.fixture
 def propietario():
-    propietario = models.Propietario.crear(
+    propietario = usuarios.Propietario.crear(
         nombre="Lorena",
         correo="lorenaPRO@gmail.com",
         usuario="lorenaPRO",
@@ -12,8 +12,8 @@ def propietario():
     return propietario
 
 @pytest.fixture
-def ofertas(propietario):
-    oferta1 = models.Oferta.crear(
+def propuestas(propietario):
+    oferta1 = ofertas.Oferta.crear(
         titulo="Cortar espárragos", 
         descripcion="Se requiere de un jornalero para abarcar tres alanzadas diarias",
         diaInicio=3, mesInicio=3, anoInicio=2026,
@@ -22,7 +22,7 @@ def ofertas(propietario):
         propietario=propietario
     )
     
-    oferta2 = models.Oferta.crear(
+    oferta2 = ofertas.Oferta.crear(
         titulo="Coger aceitunas", 
         descripcion="Se requiere de un jornalero para 6h diarias",
         diaInicio=15, mesInicio=10, anoInicio=2026,
@@ -35,13 +35,13 @@ def ofertas(propietario):
 
 @pytest.fixture
 def jornalero():
-    jornalero = models.Jornalero.crear(
+    jornalero = usuarios.Jornalero.crear(
         nombre="Lorena",
         correo="lorenaJOR@gmail.com",
         usuario="lorenaJOR",
         contrasena="jor"
     )
-    models.Calendario.crear(jornalero)
+    calendarios.Calendario.crear(jornalero)
     return jornalero
 
 @pytest.fixture
@@ -57,19 +57,19 @@ def calendario(jornalero):
 @pytest.mark.django_db
 def test_crear_propietario(propietario):
     assert propietario.id is not None
-    assert models.Propietario.existe(propietario.id)
+    assert usuarios.Propietario.existe(propietario.id)
 
 @pytest.mark.django_db
-def test_crear_oferta(ofertas):
-    oferta1, oferta2 = ofertas
+def test_crear_oferta(propuestas):
+    oferta1, oferta2 = propuestas
     assert oferta1.id is not None
-    assert models.Oferta.existe(oferta1.id)
+    assert ofertas.Oferta.existe(oferta1.id)
     assert oferta2.id is not None
-    assert models.Oferta.existe(oferta2.id)
+    assert ofertas.Oferta.existe(oferta2.id)
 
 @pytest.mark.django_db
-def test_propietario_propone_ofertas(propietario, ofertas):    
-    oferta1, oferta2 = ofertas
+def test_propietario_propone_ofertas(propietario, propuestas):    
+    oferta1, oferta2 = propuestas
     propietario_ofertas = propietario.getOfertas()
     assert len(propietario_ofertas) == 2
     assert oferta1 in propietario_ofertas
@@ -83,17 +83,17 @@ def test_propietario_propone_ofertas(propietario, ofertas):
 @pytest.mark.django_db
 def test_crear_jornalero(jornalero):
     assert jornalero.id is not None
-    assert models.Jornalero.existe(jornalero.id)
+    assert usuarios.Jornalero.existe(jornalero.id)
 
 @pytest.mark.django_db
 def test_crear_calendario(calendario):
     assert calendario.id is not None
-    assert models.Calendario.existe(calendario.id)
+    assert calendarios.Calendario.existe(calendario.id)
 
 @pytest.mark.django_db
 def test_jornalero_tiene_calendario(jornalero):
     assert jornalero.calendario is not None
-    assert models.Calendario.existe(jornalero.calendario.id)
+    assert calendarios.Calendario.existe(jornalero.calendario.id)
 
 
 ##################################################################################################
@@ -185,32 +185,32 @@ def test_quitar_periodo(calendario):
 ##################################################################################################
 
 @pytest.mark.django_db
-def test_eliminar_propietario(propietario, ofertas):
-    oferta1, oferta2 = ofertas
-    assert models.Oferta.existe(oferta1.id)
-    assert models.Oferta.existe(oferta2.id)
+def test_eliminar_propietario(propietario, propuestas):
+    oferta1, oferta2 = propuestas
+    assert ofertas.Oferta.existe(oferta1.id)
+    assert ofertas.Oferta.existe(oferta2.id)
     propietario.eliminar()
-    assert not models.Oferta.existe(oferta1.id)
-    assert not models.Oferta.existe(oferta2.id)
+    assert not ofertas.Oferta.existe(oferta1.id)
+    assert not ofertas.Oferta.existe(oferta2.id)
 
 @pytest.mark.django_db
 def test_eliminar_jornalero(jornalero):
    calendario_id = jornalero.calendario.id
-   assert models.Calendario.existe(calendario_id)
+   assert calendarios.Calendario.existe(calendario_id)
    jornalero.eliminar()
-   assert not models.Calendario.existe(calendario_id)
+   assert not calendarios.Calendario.existe(calendario_id)
 
 ##################################################################################################
 # HU20. Como administrador, debo poder eliminar una oferta.
 ##################################################################################################
 
 @pytest.mark.django_db
-def test_eliminar_oferta(propietario, ofertas):
-    oferta1, oferta2 = ofertas
-    assert models.Propietario.existe(propietario.id)
-    assert models.Oferta.existe(oferta1.id)
-    assert models.Oferta.existe(oferta2.id)
+def test_eliminar_oferta(propietario, propuestas):
+    oferta1, oferta2 = propuestas
+    assert usuarios.Propietario.existe(propietario.id)
+    assert ofertas.Oferta.existe(oferta1.id)
+    assert ofertas.Oferta.existe(oferta2.id)
     oferta2.eliminar()
-    assert models.Propietario.existe(propietario.id)
-    assert models.Oferta.existe(oferta1.id)
-    assert not models.Oferta.existe(oferta2.id)
+    assert usuarios.Propietario.existe(propietario.id)
+    assert ofertas.Oferta.existe(oferta1.id)
+    assert not ofertas.Oferta.existe(oferta2.id)
