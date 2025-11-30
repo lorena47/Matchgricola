@@ -1,5 +1,8 @@
 from invoke import task
 import os
+import shutil
+
+EXCLUDED_DIRS = {"venv", ".venv", "env", ".env", "__pypackages__"}
 
 @task
 def configurar(c):
@@ -7,8 +10,8 @@ def configurar(c):
 
 @task
 def test(c):
-  c.run("pytest app/test/test_perfiles.py")
-  c.run("pytest app/test/test_suscripciones.py")
+  c.run("pytest app/test/test_models/test_HU1aHU3.py")
+  c.run("pytest app/test/test_models/test_HU4aHU13.py")
 
 @task
 def migrar(c):
@@ -20,7 +23,18 @@ def resetear(c):
   if os.path.exists("db.sqlite3"):
     os.remove("db.sqlite3")
 
-  migrations_path = os.path.join("app", "migrations")
-  for archivo in os.listdir(migrations_path):
-    if archivo.endswith("_initial.py"):
-      os.remove(os.path.join(migrations_path, archivo))
+  for root, dirs, files in os.walk(".", topdown=True):
+    dirs[:] = [d for d in dirs if d not in EXCLUDED_DIRS]
+
+    for d in dirs:
+      full = os.path.join(root, d)
+
+      if d == "__pycache__":
+        shutil.rmtree(full)
+        print(f"Eliminado: {full}")
+        continue
+
+      if d == "migrations":
+        if os.path.exists(os.path.join(full, "__init__.py")):
+          shutil.rmtree(full)
+          print(f"Eliminado: {full}")
