@@ -1,0 +1,48 @@
+services:
+
+  db-data:
+    image: busybox
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    command: ["true"]
+
+  db:
+    image: postgres:15
+    container_name: proyecto-db
+    environment:
+      POSTGRES_DB: proyecto
+      POSTGRES_USER: proyecto
+      POSTGRES_PASSWORD: proyecto
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - proyecto-net
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: proyecto-web:local
+    container_name: proyecto-web
+    depends_on:
+      - db
+    environment:
+      POSTGRES_DB: proyecto
+      POSTGRES_USER: proyecto
+      POSTGRES_PASSWORD: proyecto
+      DB_HOST: db
+      DB_PORT: 5432
+      DJANGO_SETTINGS_MODULE: proyecto.settings
+    ports:
+      - "8000:8000"
+    networks:
+      - proyecto-net
+    volumes:
+      - staticfiles:/app/staticfiles
+
+volumes:
+  pgdata: {}
+  staticfiles: {}
+
+networks:
+  proyecto-net: {}

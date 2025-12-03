@@ -15,26 +15,52 @@ def test(c):
 
 @task
 def migrar(c):
-  c.run("python manage.py makemigrations")
-  c.run("python manage.py migrate")
+  c.run("python manage.py makemigrations base")
+  c.run("python manage.py migrate base")
+
+# @task
+# def resetear(c):
+#   if os.path.exists("db.sqlite3"):
+#     os.remove("db.sqlite3")
+
+#   for root, dirs, files in os.walk(".", topdown=True):
+#     dirs[:] = [d for d in dirs if d not in EXCLUDED_DIRS]
+
+#     for d in dirs:
+#       full = os.path.join(root, d)
+
+#       if d == "__pycache__":
+#         shutil.rmtree(full)
+#         print(f"Eliminado: {full}")
+#         continue
+
+#       if d == "migrations":
+#         if os.path.exists(os.path.join(full, "__init__.py")):
+#           shutil.rmtree(full)
+#           print(f"Eliminado: {full}")
 
 @task
-def resetear(c):
-  if os.path.exists("db.sqlite3"):
-    os.remove("db.sqlite3")
+def reconstruir(c):
+  # if os.path.exists("db.sqlite3"):
+  #   os.remove("db.sqlite3")
 
-  for root, dirs, files in os.walk(".", topdown=True):
-    dirs[:] = [d for d in dirs if d not in EXCLUDED_DIRS]
+  # for root, dirs, files in os.walk(".", topdown=True):
+  #   dirs[:] = [d for d in dirs if d not in EXCLUDED_DIRS]
 
-    for d in dirs:
-      full = os.path.join(root, d)
+  #   for d in dirs:
+  #     full = os.path.join(root, d)
 
-      if d == "__pycache__":
-        shutil.rmtree(full)
-        print(f"Eliminado: {full}")
-        continue
+  #     if d == "__pycache__":
+  #       shutil.rmtree(full)
+  #       print(f"Eliminado: {full}")
+  #       continue
 
-      if d == "migrations":
-        if os.path.exists(os.path.join(full, "__init__.py")):
-          shutil.rmtree(full)
-          print(f"Eliminado: {full}")
+  #     if d == "migrations":
+  #       if os.path.exists(os.path.join(full, "__init__.py")):
+  #         shutil.rmtree(full)
+  #         print(f"Eliminado: {full}")
+
+    c.run("docker compose down -v")
+    c.run("docker compose up --build")
+
+
