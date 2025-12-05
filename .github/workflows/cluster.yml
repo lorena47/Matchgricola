@@ -25,4 +25,4 @@ jobs:
 
     - name: Run cluster tests
       run: |
-        invoke clutest
+        invoke clustest
