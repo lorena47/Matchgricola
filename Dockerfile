@@ -6,6 +6,9 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
+# Crear usuario no-root para la app
+RUN groupadd -r app && useradd -r -g app app
+
 # Dependencias del sistema necesarias para compilación y netcat para esperar DB
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
