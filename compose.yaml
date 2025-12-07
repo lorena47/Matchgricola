@@ -19,10 +19,7 @@ services:
       - proyecto-net
 
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: proyecto-web:local
+    image: ghcr.io/lorena47/matchgricola-web:latest
     container_name: proyecto-web
     depends_on:
       - db
