@@ -5,7 +5,7 @@ import pytest
 import os
 
 
-BASE = "http://localhost:8000/api"
+BASE = os.getenv("BASE_URL", "http://localhost:8000/api")
 
 
 @pytest.fixture(scope="session", autouse=True)

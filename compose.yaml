@@ -19,6 +19,7 @@ services:
       - proyecto-net
 
   web:
+    build: .
     image: ghcr.io/lorena47/matchgricola-web:latest
     container_name: proyecto-web
     depends_on:
@@ -29,7 +30,10 @@ services:
       POSTGRES_PASSWORD: proyecto
       DB_HOST: db
       DB_PORT: 5432
-      DJANGO_SETTINGS_MODULE: proyecto.settings
+      USE_POSTGRES: "True"
+      DEBUG: "True"
+      SECRET_KEY: "dev-secret-key"
+      ALLOWED_HOSTS: "localhost,127.0.0.1"
     ports:
       - "8000:8000"
     networks:
