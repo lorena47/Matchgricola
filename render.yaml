@@ -1,0 +1,53 @@
+services:
+  - type: web
+    name: matchgricola-web
+    env: docker
+    region: frankfurt
+    plan: free
+    dockerfilePath: Dockerfile
+    autoDeploy: true
+
+    envVars:
+      - key: USE_POSTGRES
+        value: "True"
+
+      - key: DEBUG
+        value: "False"
+
+      - key: SECRET_KEY
+        generateValue: true
+
+      - key: ALLOWED_HOSTS
+        value: "cc-web-matchgricola.onrender.com,localhost,127.0.0.1"
+
+      - key: DB_HOST
+        fromDatabase:
+          name: matchgricola-db
+          property: host
+
+      - key: DB_PORT
+        fromDatabase:
+          name: matchgricola-db
+          property: port
+
+      - key: POSTGRES_DB
+        fromDatabase:
+          name: matchgricola-db
+          property: database
+
+      - key: POSTGRES_USER
+        fromDatabase:
+          name: matchgricola-db
+          property: user
+
+      - key: POSTGRES_PASSWORD
+        fromDatabase:
+          name: matchgricola-db
+          property: password
+
+
+databases:
+  - name: matchgricola-db
+    plan: free
+    region: frankfurt
+    postgresMajorVersion: 15
