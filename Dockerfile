@@ -32,5 +32,8 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 # Escucha en el puerto 8000
 EXPOSE 8000
 
+USER app
+
+
 # Ejecutar entrypoint (recopila estáticos, lanza migraciones y comienza gunicorn)
 CMD ["entrypoint.sh"]
