@@ -23,6 +23,8 @@ sentry_sdk.init(
     # Set traces_sample_rate to 1.0 to capture 100%
     # of transactions for performance monitoring.
     traces_sample_rate=1.0,
+    # Enable logs to be sent to Sentry
+    enable_logs=True,
 )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
