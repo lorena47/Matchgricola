@@ -16,7 +16,6 @@ echo "Recopilando archivos estáticos..."
 python manage.py collectstatic --noinput || true
 
 echo "Aplicando migraciones..."
-python manage.py makemigrations base
 python manage.py migrate --noinput
 
 echo "Iniciando servidor Gunicorn..."

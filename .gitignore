@@ -432,6 +432,3 @@ db.sqlite3
 # Archivos de pruebas
 .coverage
 .pytest_cache/
-
-# Migraciones
-*_initial.py
