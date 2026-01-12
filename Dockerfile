@@ -29,6 +29,9 @@ COPY . /app
 COPY entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
+# Crear directorio de estáticos y dar permisos al usuario app
+RUN mkdir -p /app/staticfiles && chown -R app:app /app/staticfiles
+
 # Escucha en el puerto 8000
 EXPOSE 8000
 

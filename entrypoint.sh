@@ -12,11 +12,6 @@ until nc -z "$host" "$port"; do
 done
 echo "Base de datos disponible."
 
-echo "Asegurando permisos en staticfiles..."
-mkdir -p /app/staticfiles
-chown -R app:app /app/staticfiles
-chmod -R 755 /app/staticfiles
-
 echo "Recopilando archivos estáticos..."
 python manage.py collectstatic --noinput || true
 
