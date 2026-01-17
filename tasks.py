@@ -51,3 +51,11 @@ def levantar(c):
 @task
 def clustest(c):
   c.run("pytest --capture=no test/test_cluster/test_peticiones_cluster.py")
+
+@task
+def estaticos(c):
+  c.run("python manage.py collestatic")
+
+@task
+def local(c):
+  c.run("python manage.py runserver 8080")
