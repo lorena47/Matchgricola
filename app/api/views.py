@@ -26,10 +26,12 @@ class JornaleroViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         data = serializer.validated_data
+
         with sentry_sdk.start_transaction(
             op="jornalero.create",
             name="Crear Jornalero"
-        ):
+        ) as transaction:
+
             inicio = time()
             try:
                 logger.info(f"Creando jornalero {data.get('usuario')}")
@@ -43,10 +45,10 @@ class JornaleroViewSet(viewsets.ModelViewSet):
                 )
 
                 serializer.instance = jornalero
-
                 duracion = time() - inicio
-                sentry_sdk.metrics.timing("jornalero.create.time", duracion, unit="second")
-                sentry_sdk.metrics.incr("jornalero.create.count")
+
+                transaction.set_tag("jornalero.usuario", data.get("usuario"))
+                transaction.set_measurement("duration", duracion)
 
                 logger.info(f"Jornalero {jornalero.usuario} creado correctamente")
 
