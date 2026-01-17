@@ -15,15 +15,6 @@ echo "Base de datos disponible."
 echo "Recopilando archivos estáticos..."
 python manage.py collectstatic --noinput || true
 
-if [ "${RESET_DB:-false}" = "true" ]; then
-  echo "⚠️ Borrando base de datos (RESET_DB=true)"
-  psql -U "$POSTGRES_USER" -d postgres <<EOF
-DROP DATABASE IF EXISTS $POSTGRES_DB;
-CREATE DATABASE $POSTGRES_DB;
-EOF
-fi
-
-
 echo "Aplicando migraciones..."
 python manage.py migrate --noinput
 
