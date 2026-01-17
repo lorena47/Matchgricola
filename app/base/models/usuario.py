@@ -11,7 +11,7 @@ class Usuario(models.Model):
     contrasenia = models.CharField(max_length=128)
     correo = models.EmailField(unique=True)
     nombre = models.CharField(max_length=100)
-    telefono = models.CharField(max_length=16, blank=True, null=True, validators=[constants.phoneNumberRegex], unique=True)
+    telefono = models.CharField(max_length=16, blank=True, null=True, validators=[constants.phoneNumberRegex])
 
     class Meta:
         abstract = True
