@@ -14,6 +14,10 @@ from ..base.repositories.periodo_repo import PeriodoRepository
 from ..base.repositories.calendario_repo import CalendarioRepository
 import logging
 
+import sentry_sdk
+from time import time
+
+
 logger = logging.getLogger('vista')
 
 class JornaleroViewSet(viewsets.ModelViewSet):
@@ -22,20 +26,38 @@ class JornaleroViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         data = serializer.validated_data
-        try:
-            logger.info(f"Creando jornalero {data.get('usuario')}")
-            jornalero = UsuarioRepository.crearJornalero(
-                usuario=data.get('usuario'),
-                nombre=data.get('nombre'),
-                correo=data.get('correo'),
-                contrasenia=data.get('contrasenia'),
-                telefono=data.get('telefono')
-            )
-            serializer.instance = jornalero
-            logger.info(f"Jornalero {jornalero.usuario} creado correctamente")
-        except Exception as e:
-            logger.error(f"Error creando jornalero: {str(e)}")
-            raise
+        with sentry_sdk.start_transaction(
+            op="jornalero.create",
+            name="Crear Jornalero"
+        ):
+            inicio = time()
+            try:
+                logger.info(f"Creando jornalero {data.get('usuario')}")
+
+                jornalero = UsuarioRepository.crearJornalero(
+                    usuario=data.get('usuario'),
+                    nombre=data.get('nombre'),
+                    correo=data.get('correo'),
+                    contrasenia=data.get('contrasenia'),
+                    telefono=data.get('telefono')
+                )
+
+                serializer.instance = jornalero
+
+                duracion = time() - inicio
+                sentry_sdk.metrics.timing("jornalero.create.time", duracion, unit="second")
+                sentry_sdk.metrics.incr("jornalero.create.count")
+
+                logger.info(f"Jornalero {jornalero.usuario} creado correctamente")
+
+            except Exception as e:
+                sentry_sdk.set_context("jornalero", {
+                    "usuario": data.get("usuario"),
+                    "correo": data.get("correo"),
+                })
+                sentry_sdk.capture_exception(e)
+                logger.error(f"Error creando jornalero: {str(e)}")
+                raise
 
     def perform_destroy(self, instance):
         try:
