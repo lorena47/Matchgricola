@@ -41,7 +41,16 @@ SECRET_KEY = os.getenv("SECRET_KEY", "insecure-dev-key")
 # DEBUG = True
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "matchgricola-web-jsbw.onrender.com",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://matchgricola-web-jsbw.onrender.com",
+]
+
 
 
 # Application definition
