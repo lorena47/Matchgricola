@@ -6,7 +6,7 @@ let periodoEliminarInicio = null;
 let periodoEliminarFin = null;
 let suscripcionCancelarId = null;
 
-if (!usuario) window.location.href = "login.html";
+if (!usuario) window.location.href = "/login/";
 
 /* ===== UTIL ===== */
 
@@ -174,7 +174,6 @@ async function cargarSuscripciones() {
   const res = await fetch(`${API}/suscripciones/?jornalero=${usuario}`);
   const data = await res.json();
 
-  // 🟡 Pendientes → iniciadas por el jornalero
   renderLista(
     "suscripciones-pendientes",
     data.filter(s =>
@@ -184,7 +183,6 @@ async function cargarSuscripciones() {
     )
   );
 
-  // 📩 Propuestas → iniciadas por el propietario
   renderLista(
     "suscripciones-propuestas",
     data.filter(s =>
@@ -194,13 +192,11 @@ async function cargarSuscripciones() {
     )
   );
 
-  // ✅ Aceptadas
   renderLista(
     "suscripciones-aceptadas",
     data.filter(s => s.trabajo)
   );
 
-  // ❌ Rechazadas
   renderLista(
     "suscripciones-rechazadas",
     data.filter(s => !s.activa && !s.trabajo)
@@ -253,7 +249,6 @@ async function renderLista(id, lista) {
   }
 }
 
-
 async function aceptarPropuesta(id) {
   await fetch(`${API}/suscripciones/${id}/aceptar/`, {
     method: "POST"
@@ -267,7 +262,6 @@ async function rechazarPropuesta(id) {
   });
   cargarFeed();
 }
-
 
 function mostrarModalCancelarSuscripcion(id, titulo, i, f) {
   suscripcionCancelarId = id;
@@ -301,5 +295,4 @@ function finInput() {
   return document.getElementById("fin").value;
 }
 
-/* INIT */
 cargarFeed();

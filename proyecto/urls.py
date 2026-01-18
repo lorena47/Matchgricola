@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from .views import (login_view, registro_view, propietario_view, jornalero_view)
 
 def trigger_error(request):
     division_by_zero = 1 / 0
@@ -26,6 +27,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('app.api.urls')),
     path('sentry-debug/', trigger_error),
+    path("login/", login_view, name="login"),
+    path("registro/", registro_view, name="registro"),
+    path("propietario/", propietario_view, name="propietario"),
+    path("jornalero/", jornalero_view, name="jornalero"),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

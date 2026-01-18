@@ -435,7 +435,6 @@ class SuscripcionViewSet(viewsets.ModelViewSet):
         suscripcion = self.get_object()
 
         try:
-            # El propietario rechaza
             suscripcion.rechazar("propietario")
             return Response(
                 {"info": "Suscripción rechazada"},

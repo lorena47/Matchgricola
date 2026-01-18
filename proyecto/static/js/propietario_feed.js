@@ -1,7 +1,7 @@
 const API = "http://127.0.0.1:8080/api";
 const usuario = localStorage.getItem("usuario");
 
-if (!usuario) location.href = "login.html";
+if (!usuario) location.href = "/login/";
 
 let feedData = null;
 let ofertaSeleccionada = null;
@@ -80,7 +80,6 @@ async function crearOferta() {
     return;
   }
 
-  /* 1️⃣ Crear periodo */
   const resPeriodo = await fetch(`${API}/periodos/`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -98,7 +97,6 @@ async function crearOferta() {
 
   const periodo = await resPeriodo.json();
 
-  /* 2️⃣ Crear oferta */
   const resOferta = await fetch(`${API}/ofertas/`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -118,7 +116,6 @@ async function crearOferta() {
     return;
   }
 
-  /* 3️⃣ Limpiar formulario */
   document.getElementById("titulo").value = "";
   document.getElementById("descripcion").value = "";
   document.getElementById("plazas").value = "";
@@ -126,7 +123,6 @@ async function crearOferta() {
   document.getElementById("inicio").value = "";
   document.getElementById("fin").value = "";
 
-  /* 4️⃣ Recargar feed */
   cargarFeed();
 }
 
@@ -304,8 +300,8 @@ async function aceptarSuscripcion(id) {
     return;
   }
 
-  cargarFeed();          // 🔁 recarga ofertas (plazas)
-  cargarSuscripciones(); // 🔁 recarga listas
+  cargarFeed();
+  cargarSuscripciones();
 }
 
 
@@ -361,8 +357,5 @@ async function confirmarEliminarOferta() {
 
   cargarFeed();
 }
-
-
-/* ================= INIT ================= */
 
 cargarFeed();

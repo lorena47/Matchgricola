@@ -152,19 +152,16 @@ class Jornalero(Usuario):
     def getJornalerosDisponibles(cls, periodo):
         jornaleros = []
 
-        # 1️⃣ Obtener TODAS las ofertas de ese periodo
         ofertas = Oferta.objects.filter(periodo=periodo)
 
         for jornalero in cls.objects.all():
 
-            # 2️⃣ Si tiene alguna suscripción con cualquiera de esas ofertas → fuera
             if Suscripcion.objects.filter(
                 jornalero=jornalero,
                 oferta__in=ofertas
             ).exists():
                 continue
 
-            # 3️⃣ Comprobar disponibilidad real de calendario
             calendario = jornalero.getCalendario()
             if calendario.disponible(
                 periodo.getInicio(),

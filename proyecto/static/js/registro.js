@@ -36,7 +36,7 @@ async function registrar() {
     resultado.innerHTML = `
       <div class="alert alert-success">
         Cuenta creada correctamente ✔️<br>
-        <a href="login.html" class="alert-link">Ir al login</a>
+        <a href="/login/" class="alert-link">Ir al login</a>
       </div>
     `;
 

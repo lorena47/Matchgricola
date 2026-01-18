@@ -31,9 +31,9 @@ async function login() {
     localStorage.setItem("tipo", data.tipo);
 
     if (data.tipo === "jornalero") {
-      window.location.href = "jornalero_feed.html";
+      window.location.href = "/jornalero/";
     } else {
-      window.location.href = "propietario_feed.html";
+      window.location.href = "/propietario/";
     }
 
   } catch (error) {

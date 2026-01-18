@@ -9,12 +9,10 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
   <style>
-    /* ALTURA BASE = ALTURA FORMULARIO */
     .altura-formulario {
       height: 420px;
     }
 
-    /* Cards con layout controlado */
     .card-control {
       height: 420px;
     }
@@ -25,9 +23,8 @@
       flex-direction: column;
     }
 
-    /* CONTENIDO SCROLLABLE REAL */
     .scroll-real {
-      height: calc(100% - 60px); /* título + márgenes */
+      height: calc(100% - 60px);
       overflow-y: auto;
     }
   </style>
@@ -65,10 +62,7 @@
       <div class="card shadow card-control">
         <div class="card-body">
           <h5>Mis ofertas</h5>
-
-          <!-- SCROLL AQUÍ -->
           <div id="lista-ofertas" class="scroll-real mt-2"></div>
-
         </div>
       </div>
     </div>
@@ -81,17 +75,14 @@
           <p class="text-muted small mb-2">
             Pulsa “Ver jornaleros” en una oferta
           </p>
-
-          <!-- SCROLL AQUÍ -->
           <div id="lista-jornaleros" class="scroll-real"></div>
-
         </div>
       </div>
     </div>
 
   </div>
 
-  <!-- ================= FILA INFERIOR (SIN TOCAR) ================= -->
+  <!-- ================= FILA INFERIOR ================= -->
   <div class="row g-3 mt-3">
 
     <div class="col-md-3">
@@ -190,8 +181,8 @@
   </div>
 </div>
 
-
-<script src="js/propietario_feed.js"></script>
+{% load static %}
+<script src="{% static 'js/propietario_feed.js' %}"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
