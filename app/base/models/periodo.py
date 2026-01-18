@@ -5,6 +5,13 @@ class Periodo(models.Model):
     fecha_inicio = models.DateField()
     fecha_fin = models.DateField()
 
+    def __str__(self):
+        return (
+            f"{self.fecha_inicio.strftime('%d/%m/%Y')} "
+            f"→ "
+            f"{self.fecha_fin.strftime('%d/%m/%Y')}"
+        )
+
     class Meta:
         unique_together = ('fecha_inicio', 'fecha_fin')
 

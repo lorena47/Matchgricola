@@ -13,6 +13,9 @@ class Usuario(models.Model):
     nombre = models.CharField(max_length=100)
     telefono = models.CharField(max_length=16, blank=True, null=True, validators=[constants.phoneNumberRegex])
 
+    def __str__(self):
+        return self.usuario
+
     class Meta:
         abstract = True
     
@@ -101,7 +104,24 @@ class Jornalero(Usuario):
         return suscripcion
     
     def getOfertasDisponibles(self):
-        return Oferta.getOfertasDisponibles(self.calendario)
+        ofertas_disponibles = []
+
+        calendario = self.getCalendario()
+
+        for oferta in Oferta.objects.all():
+            periodo = oferta.getPeriodo()
+            if not calendario.disponible(periodo.getInicio(), periodo.getFin()):
+                continue
+
+            if Suscripcion.objects.filter(
+                jornalero=self,
+                oferta=oferta
+            ).exists():
+                continue
+
+            ofertas_disponibles.append(oferta)
+
+        return ofertas_disponibles
     
     def cancelarSuscripcion(self, suscripcion):
         if (suscripcion.getJornalero() == self):
@@ -132,9 +152,24 @@ class Jornalero(Usuario):
     def getJornalerosDisponibles(cls, periodo):
         jornaleros = []
 
+        # 1️⃣ Obtener TODAS las ofertas de ese periodo
+        ofertas = Oferta.objects.filter(periodo=periodo)
+
         for jornalero in cls.objects.all():
-            calendario = jornalero.calendario
-            if calendario.disponible(periodo.getInicio(), periodo.getFin()):
+
+            # 2️⃣ Si tiene alguna suscripción con cualquiera de esas ofertas → fuera
+            if Suscripcion.objects.filter(
+                jornalero=jornalero,
+                oferta__in=ofertas
+            ).exists():
+                continue
+
+            # 3️⃣ Comprobar disponibilidad real de calendario
+            calendario = jornalero.getCalendario()
+            if calendario.disponible(
+                periodo.getInicio(),
+                periodo.getFin()
+            ):
                 jornaleros.append(jornalero)
 
         return jornaleros

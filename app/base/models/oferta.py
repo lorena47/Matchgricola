@@ -13,6 +13,9 @@ class Oferta(models.Model):
     periodo = models.ForeignKey(Periodo, on_delete=models.PROTECT, related_name='ofertas')
     propietario = models.ForeignKey('Propietario', on_delete=models.CASCADE, related_name='ofertas')
 
+    def __str__(self):
+        return self.titulo
+
     @classmethod
     def crear(cls, titulo, descripcion, plazas, eurosHora, fechaInicio, fechaFin, propietario):
         fechas = Periodo.crear(fechaInicio, fechaFin)

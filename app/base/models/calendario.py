@@ -103,3 +103,6 @@ class Calendario(models.Model):
         if indice < 0 or indice >= len(periodos):
             raise IndexError(f"Índice {indice} fuera de rango. Hay {len(periodos)} periodos disponibles.")
         return periodos[indice]
+    
+    def getPeriodos(self):
+        return list(self.periodos.all().order_by('fecha_inicio'))

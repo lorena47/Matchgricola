@@ -2,6 +2,8 @@ from rest_framework import serializers
 from ..base.models.usuario import Jornalero, Propietario
 from ..base.models.periodo import Periodo
 from ..base.models.calendario import Calendario
+from ..base.models.oferta import Oferta
+from ..base.models.suscripcion import Suscripcion
 
 class JornaleroSerializer(serializers.ModelSerializer):
     contrasenia = serializers.CharField(write_only=True, style={'input_type': 'password'})
@@ -40,3 +42,91 @@ class CalendarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Calendario
         fields = ["id", "jornalero", "periodos"]
+
+class OfertaSerializer(serializers.ModelSerializer):
+    propietario = serializers.PrimaryKeyRelatedField(
+        queryset=Propietario.objects.all()
+    )
+    periodo = serializers.PrimaryKeyRelatedField(
+        queryset=Periodo.objects.all()
+    )
+
+    class Meta:
+        model = Oferta
+        fields = [
+            "id",
+            "titulo",
+            "descripcion",
+            "plazas",
+            "euros_hora",
+            "periodo",
+            "propietario",
+        ]
+
+class SuscripcionSerializer(serializers.ModelSerializer):
+    jornalero = serializers.SlugRelatedField(
+        slug_field="usuario",
+        queryset=Jornalero.objects.all()
+    )
+
+    oferta = serializers.PrimaryKeyRelatedField(
+        queryset=Oferta.objects.all()
+    )
+
+    class Meta:
+        model = Suscripcion
+        fields = [
+            "id",
+            "jornalero",
+            "oferta",
+            "trabajo",
+            "activa",
+            "interesado",
+        ]
+
+
+class PeriodoFeedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Periodo
+        fields = ["fecha_inicio", "fecha_fin"]
+
+class OfertaFeedSerializer(serializers.ModelSerializer):
+    propietario = serializers.StringRelatedField()
+    periodo = serializers.StringRelatedField()
+
+    class Meta:
+        model = Oferta
+        fields = [
+            "id",
+            "titulo",
+            "descripcion",
+            "plazas",
+            "euros_hora",
+            "periodo",
+            "propietario",
+        ]
+
+class JornaleroFeedSerializer(serializers.Serializer):
+    usuario = serializers.CharField()
+    calendario_id = serializers.IntegerField()
+    periodos_disponibles = PeriodoFeedSerializer(many=True)
+    ofertas_disponibles = OfertaFeedSerializer(many=True)
+
+class SuscripcionFeedSerializer(serializers.ModelSerializer):
+    jornalero = serializers.StringRelatedField()
+    oferta = serializers.StringRelatedField()
+
+    class Meta:
+        model = Suscripcion
+        fields = ["id", "jornalero", "oferta", "trabajo"]
+
+
+class PropietarioFeedSerializer(serializers.Serializer):
+    usuario = serializers.CharField()
+    ofertas = OfertaSerializer(many=True)
+    pendientes = SuscripcionFeedSerializer(many=True)
+    aceptadas = SuscripcionFeedSerializer(many=True)
+    
+
+
+

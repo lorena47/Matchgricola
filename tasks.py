@@ -54,8 +54,13 @@ def clustest(c):
 
 @task
 def estaticos(c):
-  c.run("python manage.py collestatic")
+  c.run("python manage.py collectstatic")
 
 @task
 def local(c):
   c.run("python manage.py runserver 8080")
+
+@task
+def frontend(c):
+  c.run("cd frontend")
+  c.run("python -m http.server 5500")

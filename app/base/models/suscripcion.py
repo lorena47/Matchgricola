@@ -29,6 +29,8 @@ class Suscripcion(models.Model):
             interesado = 'jornalero'
         elif isinstance(usuario_interesado, Propietario):
             interesado = 'propietario'
+        elif isinstance(usuario_interesado, str):
+            interesado = usuario_interesado.strip().lower()
         else:
             raise ValidationError("Usuario interesado inválido.")
         
