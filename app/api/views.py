@@ -383,8 +383,20 @@ class OfertaViewSet(viewsets.ModelViewSet):
             raise
 
 class SuscripcionViewSet(viewsets.ModelViewSet):
-    queryset = Suscripcion.objects.all()
     serializer_class = SuscripcionSerializer
+
+    def get_queryset(self):
+        qs = Suscripcion.objects.all()
+
+        if self.request.query_params.get("jornalero"):
+            jornalero = self.request.query_params.get("jornalero")
+            return qs.filter(jornalero__usuario=jornalero)
+
+        if self.request.query_params.get("propietario"):
+            propietario = self.request.query_params.get("propietario")
+            return qs.filter(oferta__propietario__usuario=propietario)
+
+        return Suscripcion.objects.none()
 
     def perform_create(self, serializer):
 
@@ -439,9 +451,20 @@ class SuscripcionViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["post"])
     def rechazar(self, request, pk=None):
         suscripcion = self.get_object()
+        username = request.user.username
+
+        if username == suscripcion.jornalero.usuario:
+            rol = "jornalero"
+        elif username == suscripcion.oferta.propietario.usuario:
+            rol = "propietario"
+        else:
+            return Response(
+                {"error": "No autorizado para rechazar esta suscripción"},
+                status=status.HTTP_403_FORBIDDEN
+            )
 
         try:
-            suscripcion.rechazar("propietario")
+            suscripcion.rechazar(rol)
             return Response(
                 {"info": "Suscripción rechazada"},
                 status=status.HTTP_200_OK
@@ -451,5 +474,4 @@ class SuscripcionViewSet(viewsets.ModelViewSet):
                 {"error": str(e)},
                 status=status.HTTP_400_BAD_REQUEST
             )
-
 
