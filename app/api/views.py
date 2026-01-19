@@ -21,6 +21,9 @@ from ..base.repositories.suscripcion_repo import SuscripcionRepository
 from ..base.services.suscripcion_serv import SuscripcionService
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
+from django.contrib.auth import login
+from django.contrib.auth.models import User
+
 
 import logging
 
@@ -83,6 +86,9 @@ class LoginView(APIView):
                 {"error": "Credenciales incorrectas"},
                 status=401
             )
+        
+        user = User.objects.get(username=usuario.usuario)
+        login(request, user)
 
         return Response({
             "usuario": usuario.usuario,
