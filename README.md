@@ -6,3 +6,4 @@
 * [Hito 2: Integración Continua.](./documentacion/hito2.md)
 * [Hito 3: Diseño de microservicios.](./documentacion/hito3.md)
 * [Hito 4: Composición de contenedores.](./documentacion/hito4.md)
+* [Hito 5: Despliegue.](./documentacion/hito5.md)

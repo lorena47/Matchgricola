@@ -51,6 +51,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://matchgricola-web-jsbw.onrender.com",
 ]
 
+LOGIN_URL = "/login/"
 
 
 # Application definition
