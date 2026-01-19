@@ -52,7 +52,7 @@ Una vez desplegada la aplicación, he comprobado su correcto funcionamiento acce
 
 Las vistas correspondientes a propietarios y jornaleros funcionan correctamente, permitiendo crear ofertas, suscribirse a ellas, aceptarlas o rechazarlas, y reflejar estos cambios correctamente en la base de datos. La API REST responde de forma consistente y estable.
 
-_Enlace al vídeo de la presentación cuando lo grabe_
+[Vídeo demostración](https://drive.google.com/file/d/10st28MIxt-1loLv_4qum3H5olYov1aWJ/view?usp=sharing)
 
 ## Pruebas de las prestaciones de la aplicación desplegada en el Paas
 
