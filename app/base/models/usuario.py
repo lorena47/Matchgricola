@@ -1,6 +1,7 @@
 from django.db import models
 from django.forms import ValidationError
 from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.models import User
 from ... import constants
 from .calendario import Calendario
 from .suscripcion import Suscripcion
@@ -29,6 +30,13 @@ class Usuario(models.Model):
             nombre=nombre,
             telefono=telefono
         )
+
+        user = User.objects.create_user(
+            username=usuario,
+            password=contrasenia,
+            email=correo
+        )
+        
         return cuenta
     
     @classmethod
