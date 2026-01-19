@@ -396,7 +396,7 @@ class SuscripcionViewSet(viewsets.ModelViewSet):
             propietario = self.request.query_params.get("propietario")
             return qs.filter(oferta__propietario__usuario=propietario)
 
-        return Suscripcion.objects.none()
+        return qs
 
     def perform_create(self, serializer):
 
